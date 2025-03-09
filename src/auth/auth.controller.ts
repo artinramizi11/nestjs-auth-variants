@@ -8,18 +8,20 @@ import { AuthorizationGuard } from './guards/authorization.guard';
 import { AuthGuardJwt } from './guards/AuthGuardJwt.guard';
 import { CreateUserDto } from './create-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private authService: AuthService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
     ){}
 
     @Get()
     @SetMetadata("public",true)
     get(@Session() session){
-        return session
+        return "welcome to auth api"
     }
 
     @Get("google")
