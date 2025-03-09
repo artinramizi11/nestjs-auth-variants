@@ -7,11 +7,13 @@ import { Roles } from './roles.metadata';
 import { AuthorizationGuard } from './guards/authorization.guard';
 import { AuthGuardJwt } from './guards/AuthGuardJwt.guard';
 import { CreateUserDto } from './create-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
     constructor(
-        private authService: AuthService
+        private authService: AuthService,
+        private jwtService: JwtService
     ){}
 
     @Get()
@@ -20,10 +22,29 @@ export class AuthController {
         return session
     }
 
-    @Get("test-session")
+    @Get("google")
     @SetMetadata("public",true)
-    test(@Session() session){
-        return session
+    @UseGuards(AuthGuard("google"))
+    loginWithGoogle(){
+        return "login with google"
+    }
+
+    @Get("google/redirect")
+    @SetMetadata("public",true)
+    @UseGuards(AuthGuard("google"))
+    async getInformation (@Req() req){
+        const user = req.user
+        const payload = {id: user.id};
+        const token = await this.jwtService.signAsync(payload, {secret: "secret_key"})
+        return {
+           user,
+           token
+        }
+    }
+
+    @Get("google/information")
+    getGoogleInformation(@Req() req){
+        return this.authService.findUserById(req.user.id)
     }
 
 

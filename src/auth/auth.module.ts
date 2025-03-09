@@ -7,6 +7,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt-strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuardJwt } from './guards/AuthGuardJwt.guard';
+import { GoogleStrategy } from './strategies/google-strategy';
 
 
 @Module({
@@ -16,7 +17,7 @@ import { AuthGuardJwt } from './guards/AuthGuardJwt.guard';
     secret: "secret_key",
     signOptions: {expiresIn: "1h"}
   })],
-  providers: [AuthService,LocalStrategy,JwtStrategy, {provide: APP_GUARD, useClass: AuthGuardJwt }],
+  providers: [AuthService,LocalStrategy,JwtStrategy, {provide: APP_GUARD, useClass: AuthGuardJwt },GoogleStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}

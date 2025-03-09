@@ -7,13 +7,13 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwt') {
 
     constructor(){
         super({
-            jwtFromRequest: ExtractJwt.fromExtractors([(req) => req.cookies?.jwt]),
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: "secret_key"
         })
     }
 
 
     validate(payload: any) {
-        return {userId: payload.sub, email: payload.email}
+        return {id: payload.id, email: payload.email}
     }
 }
