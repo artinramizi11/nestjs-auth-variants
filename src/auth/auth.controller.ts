@@ -14,11 +14,11 @@ export class AuthController {
     constructor(
         private authService: AuthService,
         private jwtService: JwtService,
+        @Inject("jwt-secret-key") private jwtSecretKey: string
     ){}
 
 
     @Get()
-    @SetMetadata("public",true)
     get(){
       return "hello"
     }
@@ -36,7 +36,7 @@ export class AuthController {
     async getInformation (@Req() req){
         const user = req.user
         const payload = {id: user.id};
-        const token = await this.jwtService.signAsync(payload, {secret: "secret_key"})
+        const token = await this.jwtService.signAsync(payload, {secret: this.jwtSecretKey})
         return {
            user,
            token
