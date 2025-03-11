@@ -8,10 +8,10 @@ export class AuthorizationGuard implements CanActivate {
         private authService: AuthService,
         private reflector: Reflector
     ){}
-    async canActivate(context: ExecutionContext) {
+     canActivate(context: ExecutionContext) {
         const request = context.switchToHttp().getRequest()
-        const userId = request.user.userId;
-        const user = await this.authService.findUserById(userId)
+        const userId = request.user.id;
+        const user = this.authService.findUserById(Number(userId))
         const requiredRoles = this.reflector.getAllAndOverride<string[]>("roles", [context.getHandler(),context.getClass()])
 
         const hasRole = requiredRoles.every((role) => user.role.includes(role))

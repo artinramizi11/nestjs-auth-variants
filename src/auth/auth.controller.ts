@@ -1,14 +1,12 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, Res, Session, SetMetadata, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, HttpException, HttpStatus, Inject, Param, ParseIntPipe, Post, Req, Res, Session, SetMetadata, UseFilters, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { AuthService, users } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { OwnershipGuard } from './guards/ownership.guard';
-import { LogginInterceptor } from './loggin.interceptor';
 import { Roles } from './roles.metadata';
 import { AuthorizationGuard } from './guards/authorization.guard';
-import { AuthGuardJwt } from './guards/AuthGuardJwt.guard';
-import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { LogginInterceptor } from './interceptor/loggin.interceptor';
 
 
 @Controller('auth')
@@ -18,10 +16,11 @@ export class AuthController {
         private jwtService: JwtService,
     ){}
 
+
     @Get()
     @SetMetadata("public",true)
-    get(@Session() session){
-        return "welcome to auth api"
+    get(){
+      return "hello"
     }
 
     @Get("google")

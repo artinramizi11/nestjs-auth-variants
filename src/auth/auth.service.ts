@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 export const users = [
     {
@@ -73,5 +73,9 @@ export class AuthService {
             throw new HttpException("No user found with that id",HttpStatus.NOT_FOUND)
         }
         return user
+    }
+
+    testSomething(){
+        throw new HttpException("test something function is failed",HttpStatus.BAD_REQUEST)
     }
 }
