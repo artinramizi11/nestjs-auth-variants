@@ -11,8 +11,8 @@ export class AuthGuardJwt extends AuthGuard('jwt'){
     }
 
     canActivate(context: ExecutionContext){
-       const isPublic = this.reflector.getAllAndOverride("public", [context.getHandler(),context.getClass()])
-        if(isPublic){
+       const jwtNotIncluded = this.reflector.getAllAndOverride("dontincludejwt", [context.getHandler(),context.getClass()])
+        if(jwtNotIncluded){
             return true 
         }
 

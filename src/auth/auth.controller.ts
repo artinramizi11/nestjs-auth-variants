@@ -26,14 +26,14 @@ export class AuthController {
     }
 
     @Get("google")
-    @SetMetadata("public",true)
+    @DontIncludeJwt()
     @UseGuards(AuthGuard("google"))
     loginWithGoogle(){
         return "login with google"
     }
 
     @Get("google/redirect")
-    @SetMetadata("public",true)
+    @DontIncludeJwt()
     @UseGuards(AuthGuard("google"))
     async getInformation (@Req() req){
         const user = req.user
@@ -61,6 +61,7 @@ export class AuthController {
 
     @Post("refresh")
     @UseGuards(AuthGuard("refresh-jwt"))
+    @DontIncludeJwt()
     refreshToken(@Req() req){
         return this.authService.refreshToken(req.user.sub)
     }
