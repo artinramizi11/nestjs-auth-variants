@@ -18,6 +18,6 @@ export class AuthGuardJwt extends AuthGuard('jwt'){
 
         return super.canActivate(context)
     
-    }
+    }  
     
 }

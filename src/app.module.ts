@@ -14,14 +14,6 @@ dotenv.config()
     load: [configuration]
   })],
   controllers: [AppController],
-  providers: [AppService , {
-    provide: "jwt-secret-key",
-    useFactory: () => {
-      const secret_key = process.env.secret_key as string;
-      console.log(secret_key)
-      return secret_key
-    }
-  }],
-  exports: ['jwt-secret-key']
+  providers: [AppService],
 })
 export class AppModule {}

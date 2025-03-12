@@ -7,6 +7,8 @@ import { AuthorizationGuard } from './guards/authorization.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LogginInterceptor } from './interceptor/loggin.interceptor';
+import { ConfigService } from '@nestjs/config';
+import { DontIncludeJwt } from './jwt-not-included.metadata';
 
 
 @Controller('auth')
@@ -14,7 +16,7 @@ export class AuthController {
     constructor(
         private authService: AuthService,
         private jwtService: JwtService,
-        @Inject("jwt-secret-key") private jwtSecretKey: string
+        private configService: ConfigService
     ){}
 
 
@@ -36,7 +38,7 @@ export class AuthController {
     async getInformation (@Req() req){
         const user = req.user
         const payload = {id: user.id};
-        const token = await this.jwtService.signAsync(payload, {secret: this.jwtSecretKey})
+        const token = this.jwtService.sign(payload, {secret: this.configService.get("jwt_secret_key")})
         return {
            user,
            token
@@ -57,10 +59,17 @@ export class AuthController {
         return this.authService.login(req.user.id)
     }
 
+    @Post("refresh")
+    @UseGuards(AuthGuard("refresh-jwt"))
+    refreshToken(@Req() req){
+        return this.authService.refreshToken(req.user.sub)
+    }
+    
     @Get("profile")
     @UseInterceptors(LogginInterceptor)
     getProfile(@Req() req){
-        return this.authService.findUserById(req.user.userId)
+        console.log(req.user)
+        return this.authService.findUserById(req.user.id)
     }
 
     @Post("create-user")

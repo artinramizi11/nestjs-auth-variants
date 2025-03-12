@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ConfigService } from '@nestjs/config';
 
 export const users = [
     {
@@ -9,7 +10,7 @@ export const users = [
         password: "tini1234",
         city: "gjilan",
         country: "kosovo",
-        skills: ['HTML','CSS','JAVASCRIPT','REACT','NEST JS'],
+        skills: ['react','typescript','nest'],
         birthdayDate: '14/03/2004',
         age: 20,
         role: "admin"
@@ -20,17 +21,19 @@ export const users = [
         password: "tini1234",
         city: "gjilan",
         country: "kosovo",
-        skills: ['HTML','CSS','JAVASCRIPT','REACT','NEST JS'],
+        skills: ['react','typescript','nest'],
         birthdayDate: '14/03/2004',
         age: 20,
         role: "user"
     }
 ]
+
 @Injectable()
 export class AuthService {
 
     constructor(
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private configService: ConfigService
     ){}
 
     getUsers(){
@@ -51,10 +54,27 @@ export class AuthService {
             throw new HttpException("No user found with that ID",HttpStatus.NOT_FOUND)
         }
         const payload = {sub: user.id, email: user.email} 
-        const token = await this.jwtService.signAsync(payload, {secret: "secret_key"})
-        return {token}
+        const token = await this.jwtService.signAsync(payload, {secret: this.configService.get("jwt_secret_key")})
+        const refreshToken = await this.jwtService.signAsync(payload, {secret: this.configService.get("jwt_refresh_key"),expiresIn: "7d"})
+        return {
+            token,
+            refreshToken
+        
+        }
     }
 
+    async refreshToken(userId: number){
+        const user = users.find((user) => user.id === userId)
+        if(!user){
+            throw new HttpException("No user found with this id",HttpStatus.NOT_FOUND)
+        }
+        const payload = {id: user.id, email: user.email, role: user.role, birthday: user.birthdayDate}
+        const token = await this.jwtService.signAsync(payload, {secret: this.configService.get("jwt_secret_key")})
+        return {
+            token
+        }
+    }
+    
      createUser(user: CreateUserDto){
         const addUser: any = {...user, id: users.length + 1}
       
@@ -65,7 +85,6 @@ export class AuthService {
          }
 
     }
-
 
      findUserById(id: number){
         const user = users.find((user) => user.id === id)
