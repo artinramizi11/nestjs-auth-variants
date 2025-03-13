@@ -10,7 +10,7 @@ import { LogginInterceptor } from './interceptor/loggin.interceptor';
 import { ConfigService } from '@nestjs/config';
 import { DontIncludeJwt } from './jwt-not-included.metadata';
 
-
+@UseInterceptors(LogginInterceptor)
 @Controller('auth')
 export class AuthController {
     constructor(
@@ -53,8 +53,8 @@ export class AuthController {
 
     @Post('login')
     @SetMetadata("public",true)
-    @UseInterceptors(LogginInterceptor)
     @UseGuards(AuthGuard("local"))
+    @DontIncludeJwt()
     login(@Req() req){
         return this.authService.login(req.user.id)
     }
