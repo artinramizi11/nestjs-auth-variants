@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
+import { JwtPayload } from 'src/jwt-payload.type';
 
 export const users = [
     {
@@ -53,8 +54,8 @@ export class AuthService {
         if(!user){
             throw new HttpException("No user found with that ID",HttpStatus.NOT_FOUND)
         }
-        const payload = {sub: user.id, email: user.email} 
-        const token = await this.jwtService.signAsync(payload, {secret: this.configService.get("jwt_secret_key")})
+        const payload: JwtPayload = {sub: user.id, email: user.email} 
+        const token = await this.jwtService.signAsync(payload, {secret: this.configService.get("jwt_secret_key"), expiresIn: '60s'})
         const refreshToken = await this.jwtService.signAsync(payload, {secret: this.configService.get("jwt_refresh_key"),expiresIn: "7d"})
         return {
             token,

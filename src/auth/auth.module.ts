@@ -8,18 +8,24 @@ import { JwtStrategy } from './strategies/jwt-strategy';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthGuardJwt } from './guards/AuthGuardJwt.guard';
 import { GoogleStrategy } from './strategies/google-strategy';
-import {  ConfigService } from '@nestjs/config';
+import {  ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpExceptionFilter } from './exceptions/http-exception.catch';
 import { AppModule } from 'src/app.module';
 import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
 
 
+
 @Module({
   imports: [
     forwardRef(() => AppModule),PassportModule,
-    JwtModule.register({
-    secret: "artinramizi14032004",
-    signOptions: {expiresIn: "1h"}})],
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        global: true,
+        secret: configService.get<string>("jwt_secret_key") as string,
+      })
+    })],
   
   providers: [AuthService,LocalStrategy,JwtStrategy, {provide: APP_GUARD, useClass: AuthGuardJwt },GoogleStrategy,ConfigService, 
     {
