@@ -8,7 +8,7 @@ export const users = [
     {
         id: 1,
         email: "artin11@outlook.com",
-        password: "tini1234",
+        password: "bbb11",
         city: "gjilan",
         country: "kosovo",
         skills: ['react','typescript','nest'],
@@ -19,7 +19,7 @@ export const users = [
     {
         id: 2,
         email: "artin12@outlook.com",
-        password: "tini1234",
+        password: "bbb333",
         city: "gjilan",
         country: "kosovo",
         skills: ['react','typescript','nest'],
